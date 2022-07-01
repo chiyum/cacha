@@ -11,6 +11,7 @@ import router from "./router";
 /* 插件 */
 import sweetalert from "@/plugins/sweetalert";
 import storage from "@/plugins/storage";
+import "./assets/main.scss";
 
 const app = createApp(App);
 app.provide("$storage", storage);
