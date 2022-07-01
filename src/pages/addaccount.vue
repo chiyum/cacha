@@ -12,17 +12,19 @@
   <div class="submit">
     <div class="btns" @click="sort">上傳</div>
   </div>
-  <div class="modal"></div>
 </template>
 <script>
 import { reactive, onMounted, inject } from "vue";
 // import { useStore } from "vuex";
 // import axios from "axios";
 // import $ from "jquery";
+import axios from "axios";
+import { useRouter } from "vue-router";
 export default {
   layout: "layout-host",
   setup() {
     const swal = inject("$swal");
+    const router = useRouter();
     const holder =
       "請輸入或貼上獎池資料 \n格式:\n帳號 密碼 稀有等級 圖片網址\n範例：\nyakyuu001 yakyuu001 2 https://img.png";
     const form = reactive({
@@ -48,6 +50,29 @@ export default {
         });
       }
       console.log(form.list);
+      let res = await axios.post(
+        "https://drawing.wolves.com.tw/api/v1/mollie/account/add",
+        form.list
+      );
+
+      if (res.data?.state !== 1)
+        return swal.fire({
+          title: "上傳失敗",
+          text: "請重新嘗試",
+        });
+      form.data = "";
+      let ask = await swal.fire({
+        title: "上傳成功",
+        text: "是否前往查看列表",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "前往",
+        cancelButtonText: "取消",
+        reverseButtons: true,
+      });
+      if (ask.isConfirmed) {
+        router.push("/account");
+      }
     };
     onMounted(() => {});
     return {

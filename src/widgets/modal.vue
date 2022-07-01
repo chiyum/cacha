@@ -37,7 +37,7 @@ export default {
   width: 550px;
   border-radius: 6px;
   background: #fff;
-  animation: showModal forwards 0.8s;
+  animation: showModal forwards ease 0.5s;
 }
 @keyframes showModal {
   0% {
@@ -59,6 +59,8 @@ export default {
   justify-content: center;
   padding: 0.5rem 0;
   border-bottom: 0.5px solid #cdcdcd;
+  background: #016fa7;
+  color: #fff;
 }
 .modal_main {
   min-height: 300px;

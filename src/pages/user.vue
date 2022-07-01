@@ -8,73 +8,151 @@
   </div>
   <ul class="account-list">
     <li>
-      <div>帳號</div>
-      <div>密碼</div>
-      <div>稀有度</div>
-      <div>名稱</div>
-      <div>
-        <span class="svgicon edit"></span><span class="svgicon del"></span>
-      </div>
+      <div>夥伴</div>
+      <div></div>
     </li>
-    <li v-for="(item, index) in devData" :key="item.id + index">
-      <div>{{ item.account }}</div>
-      <div>{{ item.password }}</div>
-      <div>{{ item.rarity }}</div>
+    <li
+      v-for="item in form.list"
+      :key="item.userId"
+      v-show="form.list.length !== 0"
+    >
       <div>{{ item.username }}</div>
       <div class="edit">
-        <span class="svgicon edit"></span><span class="svgicon del"></span>
+        <span class="svgicon edit" @click="showEditModal(item)"></span
+        ><span class="svgicon del" @click="del(item)"></span>
       </div>
     </li>
+    <li v-show="form.list.length === 0">人員列表為空</li>
   </ul>
-  <Modal :title="`編輯`">
+  <div class="submit">
+    <div class="btns" @click="delAll">刪除全列表資料</div>
+  </div>
+  <Modal :title="`編輯`" v-if="form.isShow">
     <div class="modal">
       <div class="col">
-        <div class="label"></div>
+        <div class="label">名稱</div>
         <div class="enter">
-          <input type="text" />
+          <input type="text" v-model="form.modal.userName" />
         </div>
+      </div>
+      <div class="col right">
+        <div class="btns" @click.prevent="form.isShow = false">取消</div>
+        <div class="btns" @click="edit">修改</div>
       </div>
     </div>
   </Modal>
 </template>
 <script>
-// import { computed, ref, inject } from "vue";
+import { reactive, onMounted, inject } from "vue";
 import Modal from "@/widgets/modal.vue";
+import axios from "axios";
 export default {
   layout: "layout-host",
   components: {
     Modal,
   },
   setup() {
-    const devData = [
-      {
-        id: "1542398498152910848",
-        account: "shion",
-        password: "qwqw1212",
-        userId: "1540262324303040512",
-        username: "jimmy2",
-        rarity: 1,
-        img: "123",
-        created_at: "2022-06-30T14:43:53+08:00",
-        updated_at: "2022-06-30T14:49:36+08:00",
+    const swal = inject("$swal");
+    const form = reactive({
+      modal: {
+        id: "",
+        userName: "",
       },
-      {
-        id: "1542398498173882368",
-        account: "yakyuu12345",
-        password: "456",
-        userId: "0",
-        username: "梅西",
-        rarity: 4,
-        img: "456",
-        created_at: "2022-06-30T14:43:53+08:00",
-        updated_at: "2022-06-30T14:43:53+08:00",
-      },
-    ];
-    // const swal = inject("$swal");
+      list: [],
+      isShow: false,
+    });
+
+    const getList = async () => {
+      let res = await axios.get(
+        "https://drawing.wolves.com.tw/api/v1/mollie/user/list"
+      );
+      if (res.data.state !== 1) return;
+      console.log(res);
+      form.list = res.data.result;
+    };
+
+    const delAll = async () => {
+      let res = await swal.fire({
+        title: "操作確認",
+        text: "確定要清空所有人員資料嗎",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "刪除",
+        cancelButtonText: "取消",
+        reverseButtons: true,
+      });
+      if (res.isConfirmed) {
+        res = await axios.post(
+          "https://drawing.wolves.com.tw/api/v1/mollie/user/del-all"
+        );
+        if (res.data.state !== 1)
+          return swal.fire({
+            title: "刪除失敗",
+          });
+        swal.fire({
+          title: "刪除成功",
+        });
+        form.list = [];
+      }
+    };
+
+    const showEditModal = (item) => {
+      console.log(item);
+      form.modal = {
+        id: item.userId,
+        userName: item.username,
+      };
+      form.isShow = true;
+    };
+
+    const edit = async () => {
+      let res = await axios.post(
+        "https://drawing.wolves.com.tw/api/v1/mollie/user/edit",
+        [{ id: form.modal.id, userName: form.modal.userName }]
+      );
+      if (res.data.state !== 1) return swal.fire({ title: "修改失敗" });
+      await getList();
+      form.isShow = false;
+      form.modal = {
+        id: "",
+        userName: "",
+      };
+      swal.fire({ title: "修改成功" });
+    };
+
+    const del = async (item) => {
+      let temp = item;
+      let ask = await swal.fire({
+        title: "操作確認",
+        text: `確定要刪除${item.username}的資料嗎`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "刪除",
+        cancelButtonText: "取消",
+        reverseButtons: true,
+      });
+      if (ask.isConfirmed) {
+        console.log("確認", temp);
+        let res = await axios.post(
+          "https://drawing.wolves.com.tw/api/v1/mollie/user/del",
+          [{ id: temp.userId }]
+        );
+        if (res.data.state !== 1) return swal.fire({ title: "刪除失敗" });
+        await getList();
+        swal.fire({ title: "刪除成功" });
+      }
+    };
     // const store = useStore();
     // const enter = ref("")
+    onMounted(() => {
+      getList();
+    });
     return {
-      devData,
+      form,
+      del,
+      edit,
+      delAll,
+      showEditModal,
     };
   },
 };
@@ -83,43 +161,94 @@ export default {
 .account-list {
   width: 100%;
   min-height: 500px;
-  padding: 2rem;
+  padding: 2rem 3rem;
+  border-radius: 6px;
+  box-shadow: 1px 1px 1px 1px #c3c3c3;
   box-sizing: border-box;
   li {
     display: flex;
     align-items: center;
-    border-bottom: 1px solid #cdcdcd;
+    justify-content: space-between;
+    box-sizing: border-box;
+    padding: 0.5rem 1rem;
+    border: none;
+    &:nth-child(odd) {
+      background: #e6e3e3;
+    }
+    // border-bottom: 1px solid #cdcdcd;
     &:nth-child(1) {
-      border-top: 1px solid #cdcdcd;
+      border-top: none;
+      background: #e70012;
+      color: #fff;
+      border-radius: 6px 6px 0 0;
     }
     & > div {
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       flex-wrap: wrap;
-      width: 22.5%;
       word-break: break-all;
       text-align: center;
-      border-right: 1px solid #cdcdcd;
-    }
-    & > div:nth-child(5) {
-      width: 10%;
-      border-right: 1px solid #cdcdcd;
-      justify-content: space-evenly;
+      border-right: none;
     }
     & > div:nth-child(1) {
-      border-left: 1px solid #cdcdcd;
+      border: none;
     }
   }
 }
 
 .modal {
-  min-height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  // padding: 1rem 0;
+  // min-height: 300px;
+  min-height: auto;
+  .col {
+    display: flex;
+    align-items: center;
+    padding: 0.8rem 1rem;
+    width: 100%;
+    box-sizing: border-box;
+    .label {
+      width: 15%;
+      text-align: center;
+    }
+    .enter {
+      width: 85%;
+      input {
+        box-sizing: border-box;
+        width: 100%;
+        padding: 0px 5px;
+        height: 29px;
+        box-shadow: 1px 1px 4px #777;
+        border: 0.5px #999;
+        border-radius: 6px;
+        background-color: #fff;
+        outline: none;
+      }
+    }
+    &.right {
+      padding-top: 0;
+      justify-content: flex-end;
+      .btns {
+        padding: 0.25rem 0.5rem;
+        color: #fff;
+        background: #0077e7;
+        border-radius: 6px;
+        &:nth-child(1) {
+          margin-right: 5px;
+          background: #999;
+        }
+      }
+    }
+  }
 }
 
 @media (max-width: 980px) {
   .account-list {
-    padding: 0;
+    padding: 1rem;
   }
 }
 </style>

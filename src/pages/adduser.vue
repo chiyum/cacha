@@ -17,11 +17,13 @@
 import { reactive, onMounted, inject } from "vue";
 // import { useStore } from "vuex";
 import axios from "axios";
+import { useRouter } from "vue-router";
 // import $ from "jquery";
 export default {
   layout: "layout-host",
   setup() {
     const swal = inject("$swal");
+    const router = useRouter();
     const holder = "請輸入或貼上使用者名稱 \n範例：\nGeorge\nMollie";
     const form = reactive({
       list: [],
@@ -52,6 +54,7 @@ export default {
       // request.done((data) => {
       //   console.log(data);
       // });
+      console.log(form.list);
       let res = await axios.post(
         "https://drawing.wolves.com.tw/api/v1/mollie/user/add",
         form.list
@@ -63,9 +66,18 @@ export default {
           text: "請重新嘗試",
         });
       form.data = "";
-      swal.fire({
+      let ask = await swal.fire({
         title: "上傳成功",
+        text: "是否前往查看列表",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "前往",
+        cancelButtonText: "取消",
+        reverseButtons: true,
       });
+      if (ask.isConfirmed) {
+        router.push("/user");
+      }
     };
     onMounted(() => {});
     return {
