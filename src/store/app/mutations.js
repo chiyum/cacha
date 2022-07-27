@@ -1,6 +1,7 @@
 const mutations = {
-  "set/helloword"(state, payload) {
-    state.helloword = payload;
+  "set/card"(state, payload) {
+    state.card = payload;
+    console.log(payload, "payload");
   },
 };
 

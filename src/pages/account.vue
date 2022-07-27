@@ -6,19 +6,23 @@
       <div class="text en">Edit</div>
     </div>
   </div>
-  <ul class="account-list">
+  <ul class="account-list-ac">
     <li>
       <div>帳號</div>
       <div>密碼</div>
       <div>稀有度</div>
       <div>名稱</div>
+      <div></div>
     </li>
     <li
       v-for="item in form.list"
-      :key="item.userId"
+      :key="item.id"
       v-show="form.list.length !== 0"
     >
-      <div>{{ item.username }}</div>
+      <div>{{ item.account }}</div>
+      <div>{{ item.password }}</div>
+      <div>{{ item.rarity }}</div>
+      <div>{{ item?.prizeName }}</div>
       <div class="edit">
         <span class="svgicon edit" @click="showEditModal(item)"></span
         ><span class="svgicon del" @click="del(item)"></span>
@@ -32,9 +36,33 @@
   <Modal :title="`編輯`" v-if="form.isShow">
     <div class="modal">
       <div class="col">
-        <div class="label">名稱</div>
+        <div class="label">帳號</div>
         <div class="enter">
-          <input type="text" v-model="form.modal.userName" />
+          <input type="text" v-model="form.modal.account" />
+        </div>
+      </div>
+      <div class="col">
+        <div class="label">密碼</div>
+        <div class="enter">
+          <input type="text" v-model="form.modal.password" />
+        </div>
+      </div>
+      <div class="col">
+        <div class="label">稀有度</div>
+        <div class="enter">
+          <input type="text" v-model="form.modal.rarity" />
+        </div>
+      </div>
+      <div class="col">
+        <div class="label">獎品名稱</div>
+        <div class="enter">
+          <input type="text" v-model="form.modal.prizeName" />
+        </div>
+      </div>
+      <div class="col">
+        <div class="label">圖片網址</div>
+        <div class="enter">
+          <input type="text" v-model="form.modal.img" />
         </div>
       </div>
       <div class="col right">
@@ -58,7 +86,13 @@ export default {
     const form = reactive({
       modal: {
         id: "",
+        account: "",
+        password: "",
+        rarity: 0,
+        img: "",
+        userId: "",
         userName: "",
+        prizeName: "",
       },
       list: [],
       isShow: false,
@@ -66,11 +100,11 @@ export default {
 
     const getList = async () => {
       let res = await axios.get(
-        "https://drawing.wolves.com.tw/api/v1/mollie/user/list"
+        "https://drawing.wolves.com.tw/api/v1/mollie/account/list"
       );
       if (res.data.state !== 1) return;
       console.log(res);
-      form.list = res.data.result;
+      form.list = res.data.result || [];
     };
 
     const delAll = async () => {
@@ -85,11 +119,12 @@ export default {
       });
       if (res.isConfirmed) {
         res = await axios.post(
-          "https://drawing.wolves.com.tw/api/v1/mollie/user/del-all"
+          "https://drawing.wolves.com.tw/api/v1/mollie/account/del-all"
         );
         if (res.data.state !== 1)
           return swal.fire({
             title: "刪除失敗",
+            text: `錯誤訊息：${res.data.error[0].message}`,
           });
         swal.fire({
           title: "刪除成功",
@@ -100,24 +135,38 @@ export default {
 
     const showEditModal = (item) => {
       console.log(item);
-      form.modal = {
-        id: item.userId,
-        userName: item.username,
-      };
+      form.modal = { ...item };
       form.isShow = true;
     };
 
     const edit = async () => {
       let res = await axios.post(
-        "https://drawing.wolves.com.tw/api/v1/mollie/user/edit",
-        [{ id: form.modal.id, userName: form.modal.userName }]
+        "https://drawing.wolves.com.tw/api/v1/mollie/account/update",
+        {
+          id: form.modal.id,
+          account: form.modal.account,
+          password: form.modal.password,
+          rarity: form.modal.rarity,
+          img: form.modal.img,
+          prizeName: form.modal.prizeName,
+        }
       );
-      if (res.data.state !== 1) return swal.fire({ title: "修改失敗" });
+      if (res.data.state !== 1)
+        return swal.fire({
+          title: "修改失敗",
+          text: `錯誤訊息：${res.data.error[0].message}`,
+        });
       await getList();
       form.isShow = false;
       form.modal = {
         id: "",
+        account: "",
+        password: "",
+        rarity: 0,
+        img: "",
+        userId: "",
         userName: "",
+        prizeName: "",
       };
       swal.fire({ title: "修改成功" });
     };
@@ -126,7 +175,7 @@ export default {
       let temp = item;
       let ask = await swal.fire({
         title: "操作確認",
-        text: `確定要刪除${item.username}的資料嗎`,
+        text: `確定要刪除"${item.prizeName}"的資料嗎`,
         icon: "warning",
         showCancelButton: true,
         confirmButtonText: "刪除",
@@ -136,8 +185,8 @@ export default {
       if (ask.isConfirmed) {
         console.log("確認", temp);
         let res = await axios.post(
-          "https://drawing.wolves.com.tw/api/v1/mollie/user/del",
-          [{ id: temp.userId }]
+          "https://drawing.wolves.com.tw/api/v1/mollie/account/del",
+          [{ id: temp.id }]
         );
         if (res.data.state !== 1) return swal.fire({ title: "刪除失敗" });
         await getList();
@@ -160,7 +209,7 @@ export default {
 };
 </script>
 <style lang="scss" seoped>
-.account-list {
+.account-list-ac {
   width: 100%;
   min-height: 500px;
   padding: 2rem 3rem;
@@ -189,12 +238,18 @@ export default {
       align-items: center;
       justify-content: flex-start;
       flex-wrap: wrap;
+      padding: 0 2px;
+      width: 22.5%;
       word-break: break-all;
       text-align: center;
       border-right: none;
+      box-sizing: border-box;
     }
     & > div:nth-child(1) {
       border: none;
+    }
+    & > div:nth-child(5) {
+      width: 10%;
     }
   }
 }
@@ -239,9 +294,10 @@ export default {
         color: #fff;
         background: #0077e7;
         border-radius: 6px;
+        cursor: pointer;
         &:nth-child(1) {
-          margin-right: 5px;
-          background: #999;
+          // margin-right: 5px;
+          background: #e70012;
         }
       }
     }
@@ -249,8 +305,11 @@ export default {
 }
 
 @media (max-width: 980px) {
-  .account-list {
-    padding: 1rem;
+  .account-list-ac {
+    padding: 0;
+    li > div:nth-child(5) {
+      justify-content: center;
+    }
   }
 }
 </style>

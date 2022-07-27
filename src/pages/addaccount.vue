@@ -26,29 +26,33 @@ export default {
     const swal = inject("$swal");
     const router = useRouter();
     const holder =
-      "請輸入或貼上獎池資料 \n格式:\n帳號 密碼 稀有等級 圖片網址\n範例：\nyakyuu001 yakyuu001 2 https://img.png";
+      "請輸入或貼上excel格式的獎池資料 \n格式:\n帳號 密碼 稀有等級 獎品名稱 圖片網址\n範例：\nyakyuu001 yakyuu001 2 梅西 https://img.png";
     const form = reactive({
       list: [],
       data: "",
     });
     const sort = async () => {
       form.list = []; //reset
+      let num = 0;
       let str = form.data;
       let ary = str.split("\n"); //去除換行
       for (const item of ary) {
         let split = item.split("\t");
-        if (split.length !== 4) {
-          swal.fire({ title: "格式錯誤" });
-          break;
+        if (split.length !== 5) {
+          let split2 = item.split(" ");
+          if (split2.length !== 5) return num++;
+          split = split2;
         }
-        // console.log(item.data);
+
         form.list.push({
           account: split[0],
           password: split[1],
-          rarity: split[2],
-          img: split[3],
+          rarity: ~~split[2],
+          prizeName: split[3],
+          img: split[4],
         });
       }
+      if (num !== 0) return swal.fire({ title: "格式錯誤" });
       console.log(form.list);
       let res = await axios.post(
         "https://drawing.wolves.com.tw/api/v1/mollie/account/add",
@@ -58,7 +62,7 @@ export default {
       if (res.data?.state !== 1)
         return swal.fire({
           title: "上傳失敗",
-          text: "請重新嘗試",
+          text: `原因為：${res.data.error[0].message}，請重新嘗試`,
         });
       form.data = "";
       let ask = await swal.fire({
@@ -74,6 +78,7 @@ export default {
         router.push("/account");
       }
     };
+
     onMounted(() => {});
     return {
       form,

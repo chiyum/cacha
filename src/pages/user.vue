@@ -9,14 +9,18 @@
   <ul class="account-list">
     <li>
       <div>夥伴</div>
+      <!-- <div>抽卡與否</div> -->
+      <div>抽中角色</div>
       <div></div>
     </li>
     <li
       v-for="item in form.list"
-      :key="item.userId"
+      :key="item?.userId"
       v-show="form.list.length !== 0"
     >
-      <div>{{ item.username }}</div>
+      <div>{{ item?.username }}</div>
+      <!-- <div><input type="checkbox" disabled v-model="item.flag" /></div> -->
+      <div>{{ item?.result ?? "無抽卡" }}</div>
       <div class="edit">
         <span class="svgicon edit" @click="showEditModal(item)"></span
         ><span class="svgicon del" @click="del(item)"></span>
@@ -36,6 +40,9 @@
         </div>
       </div>
       <div class="col right">
+        <div class="btns" @click="cancelResult" v-show="form.modal.isDraw">
+          取消抽獎結果
+        </div>
         <div class="btns" @click.prevent="form.isShow = false">取消</div>
         <div class="btns" @click="edit">修改</div>
       </div>
@@ -57,6 +64,7 @@ export default {
       modal: {
         id: "",
         userName: "",
+        isDraw: false,
       },
       list: [],
       isShow: false,
@@ -64,11 +72,26 @@ export default {
 
     const getList = async () => {
       let res = await axios.get(
-        "https://drawing.wolves.com.tw/api/v1/mollie/user/list"
+        "https://drawing.wolves.com.tw/api/v1/mollie/user/list-flag"
       );
-      if (res.data.state !== 1) return;
+      if (res.data.state !== 1) return swal.fire({ title: "列表載入失敗" });
+      let accountList = await axios.get(
+        "https://drawing.wolves.com.tw/api/v1/mollie/account/list"
+      );
+      if (accountList.data.state !== 1)
+        return swal.fire({ title: "列表載入失敗" });
       console.log(res);
-      form.list = res.data.result;
+      form.list = res.data.result.map((user) => {
+        accountList.data.result.forEach((account) => {
+          console.log(user.userId === account?.userId);
+          if (user.userId === account?.userId) {
+            user.result = account.prizeName;
+            console.log(user);
+          }
+        });
+        return user;
+      });
+      console.log(form.list);
     };
 
     const delAll = async () => {
@@ -101,6 +124,7 @@ export default {
       form.modal = {
         id: item.userId,
         userName: item.username,
+        isDraw: item.flag,
       };
       form.isShow = true;
     };
@@ -118,6 +142,31 @@ export default {
         userName: "",
       };
       swal.fire({ title: "修改成功" });
+    };
+
+    const cancelResult = async () => {
+      let ask = await swal.fire({
+        title: "操作確認",
+        text: `確定要取消${form.modal.userName}的抽獎結果嗎？`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "確認",
+        cancelButtonText: "返回",
+        reverseButtons: true,
+      });
+      if (ask.isConfirmed) {
+        let res = await axios.post(
+          "https://drawing.wolves.com.tw/api/v1/mollie/user/roll-back",
+          {
+            id: form.modal.id,
+          }
+        );
+        console.log(res);
+        if (res.data.state !== 1) return swal.fire({ title: "取消失敗" });
+        await getList();
+        swal.fire({ title: "取消成功" });
+        form.isShow = false;
+      }
     };
 
     const del = async (item) => {
@@ -152,6 +201,7 @@ export default {
       del,
       edit,
       delAll,
+      cancelResult,
       showEditModal,
     };
   },
@@ -187,6 +237,7 @@ export default {
       align-items: center;
       justify-content: flex-start;
       flex-wrap: wrap;
+      width: 33.3%;
       word-break: break-all;
       text-align: center;
       border-right: none;
@@ -194,6 +245,16 @@ export default {
     & > div:nth-child(1) {
       border: none;
     }
+    // & > div:nth-child(2) {
+    //   // border: none;
+    //   // justify-content: center;
+    // }
+    & > div:nth-child(3) {
+      justify-content: flex-end;
+    }
+    // & > div:nth-child(4) {
+    //   // width: 10%;
+    // }
   }
 }
 
@@ -237,8 +298,8 @@ export default {
         color: #fff;
         background: #0077e7;
         border-radius: 6px;
-        &:nth-child(1) {
-          margin-right: 5px;
+        &:nth-child(2) {
+          margin: 0 5px;
           background: #999;
         }
       }

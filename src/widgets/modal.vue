@@ -29,7 +29,7 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 1999;
+  z-index: 1000;
   background: rgba(0, 0, 0, 0.6);
 }
 .modal__item {
@@ -58,9 +58,10 @@ export default {
   align-items: center;
   justify-content: center;
   padding: 0.5rem 0;
-  border-bottom: 0.5px solid #cdcdcd;
-  background: #016fa7;
   color: #fff;
+  border-bottom: 0.5px solid #cdcdcd;
+  border-radius: 6px 6px 0 0;
+  background: #016fa7;
 }
 .modal_main {
   min-height: 300px;

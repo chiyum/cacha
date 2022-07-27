@@ -9,10 +9,14 @@
       <div class="select">
         <select v-model="name">
           <option value="">選擇你的名稱</option>
-          <option :value="'George'">George</option>
-          <option :value="'Mollie'">Mollie</option>
-          <option :value="'Shoin'">Shoin</option>
-          <option :value="'Jimmy'">jimmy</option>
+          <option
+            v-for="item in list"
+            v-show="!item.flag"
+            :key="item.userId"
+            :value="item"
+          >
+            {{ item.username }}
+          </option>
         </select>
       </div>
       <div class="confirm" @click="toOpenCard">確認</div>
@@ -20,35 +24,65 @@
   </div>
 </template>
 <script>
-import { ref, inject } from "vue";
+import { ref, inject, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+import axios from "axios";
 export default {
   setup() {
     const name = ref("");
     const swal = inject("$swal");
     const router = useRouter();
+    const store = useStore();
+    const list = ref([]);
     const toOpenCard = () => {
       // 待api取回
-      if (name.value === "") {
+      console.log(name.value.username);
+      if (!name.value?.username) {
         swal.fire("請選擇名稱");
         return;
       }
       swal
         .fire({
           title: "報名確認",
-          text: `確認是${name.value}前往應戰嗎？`,
+          text: `確認是${name.value?.username}前往應戰嗎？`,
           confirmButtonText: "確認",
           showCancelButton: true,
           cancelButtonText: "取消",
         })
-        .then((result) => {
+        .then(async (result) => {
           if (result.isConfirmed) {
+            let res = await axios.post(
+              "https://drawing.wolves.com.tw/api/v1/account/random/draw",
+              {
+                userId: name.value.userId,
+                userName: name.value.username,
+              }
+            );
+            if (res.data.state !== 1)
+              return swal.fire({
+                title: `錯誤訊息：${res.data.error[0].message}`,
+                text: `請重新嘗試或聯絡Molie`,
+              });
+            store.commit("app/set/card", res.data.result);
             router.push("/card");
           }
         });
     };
+    const getList = async () => {
+      let res = await axios.get(
+        "https://drawing.wolves.com.tw/api/v1/mollie/user/list-flag"
+      );
+      if (res.data.state !== 1) return;
+      list.value = res.data.result;
+      console.log(list.value);
+    };
+    onMounted(() => {
+      getList();
+    });
     return {
       name,
+      list,
       toOpenCard,
     };
   },

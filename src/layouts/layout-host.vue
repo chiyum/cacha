@@ -11,6 +11,7 @@
     </div>
     <div class="head__logo">
       <!-- <img :src="logo" /> -->
+      回抽卡頁面
       <router-link to="/home"></router-link>
     </div>
     <ul class="head__nav">
@@ -272,8 +273,9 @@ a {
     align-items: center;
     width: 211px;
     height: 73px;
-    // background: #e70012;
-    background: url("@/assets/images/logo.jpeg");
+    color: #fff;
+    background: #e70012;
+    // background: url("@/assets/images/logo.jpeg");
     img {
       width: 60px;
       border-radius: 10px;
