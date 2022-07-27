@@ -9,7 +9,7 @@ import { resolve } from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: "/", //build後的路徑 如果要用go live的話要改 ./
+  base: "./", //build後的路徑 如果要用go live的話要改 ./
   plugins: [
     vue(),
     eslintPlugin({
