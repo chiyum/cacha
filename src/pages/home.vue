@@ -52,6 +52,7 @@ export default {
         })
         .then(async (result) => {
           if (result.isConfirmed) {
+            swal.showLoading();
             let res = await axios.post(
               "https://drawing.wolves.com.tw/api/v1/account/random/draw",
               {
@@ -64,6 +65,7 @@ export default {
                 title: `錯誤訊息：${res.data.error[0].message}`,
                 text: `請重新嘗試或聯絡Molie`,
               });
+            swal.close();
             store.commit("app/set/card", res.data.result);
             router.push("/card");
           }

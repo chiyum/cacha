@@ -20,7 +20,6 @@
         :key="item.text"
         @mouseover="hover(item)"
         @mouseout="hover(item)"
-        @click="toPath(item)"
       >
         <div>
           {{ item.text }}
@@ -35,7 +34,9 @@
             v-for="data in item.drops"
             :key="data.text"
           >
-            {{ data.text }}
+            <span>
+              {{ data.text }}
+            </span>
           </a>
         </div>
       </li>
@@ -322,6 +323,7 @@ a {
         transition: all 0.7s;
         overflow: hidden;
         a {
+          position: relative;
           display: flex;
           justify-content: center;
           align-items: center;
