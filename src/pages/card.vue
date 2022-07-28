@@ -5,7 +5,8 @@
       :class="{ active: status.isActive, ani: status.isAnimation }"
     >
       <img class="back" :src="card" />
-      <div class="front">
+      <!-- 避免css及圖片載入太慢會直接顯示結果 所以使用v-show -->
+      <div class="front" v-show="status.isActive">
         <div class="content">{{ form?.prizeName }}</div>
       </div>
     </div>

@@ -13,8 +13,10 @@
 import { computed, onMounted } from "vue";
 import { useStore } from "vuex";
 import { isNil, defaultTo, path } from "ramda";
+import axios from "axios";
 export default {
   setup() {
+    axios.defaults.baseURL = import.meta.env.API_URL;
     const store = useStore(); //啟用vuex
     const layout = computed(() => {
       /* 一開始都是 undefined */

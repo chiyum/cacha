@@ -108,6 +108,7 @@ export default {
     };
 
     const delAll = async () => {
+      swal.showLoading();
       let res = await swal.fire({
         title: "操作確認",
         text: "確定要清空所有人員資料嗎",
@@ -140,6 +141,7 @@ export default {
     };
 
     const edit = async () => {
+      swal.showLoading();
       let res = await axios.post(
         "https://drawing.wolves.com.tw/api/v1/mollie/account/update",
         {
@@ -172,6 +174,7 @@ export default {
     };
 
     const del = async (item) => {
+      swal.showLoading();
       let temp = item;
       let ask = await swal.fire({
         title: "操作確認",

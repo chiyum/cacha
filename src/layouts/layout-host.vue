@@ -218,6 +218,7 @@ export default {
       });
     };
     const toPath = (item) => {
+      console.log(item);
       if (item.path) {
         router.push(item.path);
         shop.mobileShowMenu = false;

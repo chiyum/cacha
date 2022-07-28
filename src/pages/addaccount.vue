@@ -54,6 +54,7 @@ export default {
       }
       if (num !== 0) return swal.fire({ title: "格式錯誤" });
       console.log(form.list);
+      swal.showLoading();
       let res = await axios.post(
         "https://drawing.wolves.com.tw/api/v1/mollie/account/add",
         form.list
