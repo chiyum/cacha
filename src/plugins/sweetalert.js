@@ -1,6 +1,29 @@
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
 
+Swal.showLoadings = function showLoading() {
+  return this.fire({
+    title: "Loading",
+    // 顯示按鈕與否
+    showConfirmButton: false,
+    // 自定義class
+    // customClass: "swal2-loading",
+    // 顯示時動畫
+    showClass: {
+      popup: "animate__animated animate__fadeIn",
+    },
+    // 關閉時動畫
+    hideClass: {
+      popup: "animate__animated animate__fadeOut",
+    },
+    // alert背景顏色
+    background: "#fff",
+    didOpen: () => {
+      Swal.showLoading();
+    },
+  });
+};
+
 export const swal = Swal.mixin({
   reverseButtons: true,
   heightAuto: false,

@@ -54,7 +54,7 @@ export default {
       // request.done((data) => {
       //   console.log(data);
       // });
-      swal.showLoading();
+      swal.showLoadings();
       console.log(form.list);
       let res = await axios.post(
         "https://drawing.wolves.com.tw/api/v1/mollie/user/add",

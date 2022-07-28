@@ -131,7 +131,7 @@ export default {
     };
 
     const edit = async () => {
-      swal.showLoading();
+      swal.showLoadings();
       let res = await axios.post(
         "https://drawing.wolves.com.tw/api/v1/mollie/user/edit",
         [{ id: form.modal.id, userName: form.modal.userName }]
@@ -157,7 +157,7 @@ export default {
         reverseButtons: true,
       });
       if (ask.isConfirmed) {
-        swal.showLoading();
+        swal.showLoadings();
         let res = await axios.post(
           "https://drawing.wolves.com.tw/api/v1/mollie/user/roll-back",
           {
@@ -173,7 +173,7 @@ export default {
     };
 
     const del = async (item) => {
-      swal.showLoading();
+      swal.showLoadings();
       let temp = item;
       let ask = await swal.fire({
         title: "操作確認",
@@ -186,7 +186,7 @@ export default {
       });
       if (ask.isConfirmed) {
         console.log("確認", temp);
-        swal.showLoading();
+        swal.showLoadings();
         let res = await axios.post(
           "https://drawing.wolves.com.tw/api/v1/mollie/user/del",
           [{ id: temp.userId }]

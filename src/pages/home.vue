@@ -52,7 +52,7 @@ export default {
         })
         .then(async (result) => {
           if (result.isConfirmed) {
-            swal.showLoading();
+            swal.showLoadings();
             let res = await axios.post(
               "https://drawing.wolves.com.tw/api/v1/account/random/draw",
               {
@@ -72,7 +72,7 @@ export default {
         });
     };
     const getList = async () => {
-      swal.showLoading();
+      swal.showLoadings();
       let res = await axios.get(
         "https://drawing.wolves.com.tw/api/v1/mollie/user/list-flag"
       );
