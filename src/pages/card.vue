@@ -6,7 +6,7 @@
     >
       <img class="back" :src="card" />
       <div class="front">
-        <div class="content">你的號碼是：{{ form?.prizeName }}</div>
+        <div class="content">{{ form?.prizeName }}</div>
       </div>
     </div>
     <div class="explain" v-show="!status.isAnimation">
@@ -179,14 +179,22 @@ export default {
       top: 1px;
       left: 2px;
       padding: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       width: 98%;
       height: 98%;
       border-radius: 13px;
       background: #fff;
       z-index: 2;
       box-sizing: border-box;
+      background-image: url("@/assets/card_front.png");
+      background-repeat: no-repeat;
+      background-size: cover;
       // backface-visibility: hidden;
       .content {
+        color: #e7d4a5;
+        font-size: 2rem;
         transform: rotateY(180deg);
       }
     }
