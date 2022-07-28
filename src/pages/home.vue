@@ -72,12 +72,14 @@ export default {
         });
     };
     const getList = async () => {
+      swal.showLoading();
       let res = await axios.get(
         "https://drawing.wolves.com.tw/api/v1/mollie/user/list-flag"
       );
-      if (res.data.state !== 1) return;
+      if (res.data.state !== 1) return swal.fire({ title: "列表載入失敗" });
       list.value = res.data.result;
       console.log(list.value);
+      swal.close();
     };
     onMounted(() => {
       getList();
