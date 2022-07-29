@@ -52,7 +52,7 @@
 <script>
 import { reactive, onMounted, inject } from "vue";
 import Modal from "@/widgets/modal.vue";
-import axios from "axios";
+import axios from "@/axios";
 export default {
   layout: "layout-host",
   components: {
@@ -72,13 +72,9 @@ export default {
     });
 
     const getList = async () => {
-      let res = await axios.get(
-        "https://drawing.wolves.com.tw/api/v1/mollie/user/list-flag"
-      );
+      let res = await axios.get("/api/v1/mollie/user/list-flag");
       if (res.data.state !== 1) return swal.fire({ title: "列表載入失敗" });
-      let accountList = await axios.get(
-        "https://drawing.wolves.com.tw/api/v1/mollie/account/list"
-      );
+      let accountList = await axios.get("/api/v1/mollie/account/list");
       if (accountList.data.state !== 1)
         return swal.fire({ title: "列表載入失敗" });
       console.log(res);
@@ -106,9 +102,7 @@ export default {
         reverseButtons: true,
       });
       if (res.isConfirmed) {
-        res = await axios.post(
-          "https://drawing.wolves.com.tw/api/v1/mollie/user/del-all"
-        );
+        res = await axios.post("/api/v1/mollie/user/del-all");
         if (res.data.state !== 1)
           return swal.fire({
             title: "刪除失敗",
@@ -132,10 +126,9 @@ export default {
 
     const edit = async () => {
       swal.showLoadings();
-      let res = await axios.post(
-        "https://drawing.wolves.com.tw/api/v1/mollie/user/edit",
-        [{ id: form.modal.id, userName: form.modal.userName }]
-      );
+      let res = await axios.post("/api/v1/mollie/user/edit", [
+        { id: form.modal.id, userName: form.modal.userName },
+      ]);
       if (res.data.state !== 1) return swal.fire({ title: "修改失敗" });
       await getList();
       form.isShow = false;
@@ -158,12 +151,9 @@ export default {
       });
       if (ask.isConfirmed) {
         swal.showLoadings();
-        let res = await axios.post(
-          "https://drawing.wolves.com.tw/api/v1/mollie/user/roll-back",
-          {
-            id: form.modal.id,
-          }
-        );
+        let res = await axios.post("/api/v1/mollie/user/roll-back", {
+          id: form.modal.id,
+        });
         console.log(res);
         if (res.data.state !== 1) return swal.fire({ title: "取消失敗" });
         await getList();
@@ -187,10 +177,9 @@ export default {
       if (ask.isConfirmed) {
         console.log("確認", temp);
         swal.showLoadings();
-        let res = await axios.post(
-          "https://drawing.wolves.com.tw/api/v1/mollie/user/del",
-          [{ id: temp.userId }]
-        );
+        let res = await axios.post("/api/v1/mollie/user/del", [
+          { id: temp.userId },
+        ]);
         if (res.data.state !== 1) return swal.fire({ title: "刪除失敗" });
         await getList();
         swal.fire({ title: "刪除成功" });

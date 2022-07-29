@@ -18,7 +18,7 @@ import { reactive, onMounted, inject } from "vue";
 // import { useStore } from "vuex";
 // import axios from "axios";
 // import $ from "jquery";
-import axios from "axios";
+import axios from "@/axios";
 import { useRouter } from "vue-router";
 export default {
   layout: "layout-host",
@@ -55,10 +55,7 @@ export default {
       if (num !== 0) return swal.fire({ title: "格式錯誤" });
       console.log(form.list);
       swal.showLoadings();
-      let res = await axios.post(
-        "https://drawing.wolves.com.tw/api/v1/mollie/account/add",
-        form.list
-      );
+      let res = await axios.post("/api/v1/mollie/account/add", form.list);
 
       if (res.data?.state !== 1)
         return swal.fire({

@@ -25,11 +25,17 @@ Swal.showLoadings = function showLoading() {
 };
 
 export const swal = Swal.mixin({
+  // 按鈕相反
   reverseButtons: true,
+  // 自動高度
   heightAuto: false,
+  // 案tab時第一個鎖定的為確認？
   focusConfirm: false,
+  // 外部不可點選關閉
   allowOutsideClick: false,
+  // 不可點選enter關閉
   allowEnterKey: false,
+  // 不可點選空白關閉
   allowEscapeKey: false,
   customClass: "swal2-wrap",
   // width: 300,

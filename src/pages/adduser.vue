@@ -16,7 +16,7 @@
 <script>
 import { reactive, onMounted, inject } from "vue";
 // import { useStore } from "vuex";
-import axios from "axios";
+import axios from "@/axios";
 import { useRouter } from "vue-router";
 // import $ from "jquery";
 export default {
@@ -46,7 +46,7 @@ export default {
         });
       }
       // var request = $.ajax({
-      //   url: "https://drawing.wolves.com.tw/api/v1/mollie/user/add",
+      //   url: "/api/v1/mollie/user/add",
       //   method: "POST",
       //   data: { data: form.list },
       //   dataType: "jsonp",
@@ -56,10 +56,7 @@ export default {
       // });
       swal.showLoadings();
       console.log(form.list);
-      let res = await axios.post(
-        "https://drawing.wolves.com.tw/api/v1/mollie/user/add",
-        form.list
-      );
+      let res = await axios.post("/api/v1/mollie/user/add", form.list);
 
       if (res.data?.state !== 1)
         return swal.fire({

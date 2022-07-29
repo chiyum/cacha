@@ -27,7 +27,7 @@
 import { ref, inject, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
-import axios from "axios";
+import axios from "@/axios";
 export default {
   setup() {
     const name = ref("");
@@ -53,13 +53,10 @@ export default {
         .then(async (result) => {
           if (result.isConfirmed) {
             swal.showLoadings();
-            let res = await axios.post(
-              "https://drawing.wolves.com.tw/api/v1/account/random/draw",
-              {
-                userId: name.value.userId,
-                userName: name.value.username,
-              }
-            );
+            let res = await axios.post("/api/v1/account/random/draw", {
+              userId: name.value.userId,
+              userName: name.value.username,
+            });
             if (res.data.state !== 1)
               return swal.fire({
                 title: `錯誤訊息：${res.data.error[0].message}`,
@@ -73,9 +70,7 @@ export default {
     };
     const getList = async () => {
       swal.showLoadings();
-      let res = await axios.get(
-        "https://drawing.wolves.com.tw/api/v1/mollie/user/list-flag"
-      );
+      let res = await axios.get("/api/v1/mollie/user/list-flag");
       if (res.data.state !== 1) return swal.fire({ title: "列表載入失敗" });
       list.value = res.data.result;
       console.log(list.value);

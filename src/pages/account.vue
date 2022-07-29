@@ -75,7 +75,7 @@
 <script>
 import { reactive, onMounted, inject } from "vue";
 import Modal from "@/widgets/modal.vue";
-import axios from "axios";
+import axios from "@/axios";
 export default {
   layout: "layout-host",
   components: {
@@ -99,9 +99,7 @@ export default {
     });
 
     const getList = async () => {
-      let res = await axios.get(
-        "https://drawing.wolves.com.tw/api/v1/mollie/account/list"
-      );
+      let res = await axios.get("/api/v1/mollie/account/list");
       if (res.data.state !== 1) return;
       console.log(res);
       form.list = res.data.result || [];
@@ -119,9 +117,7 @@ export default {
         reverseButtons: true,
       });
       if (res.isConfirmed) {
-        res = await axios.post(
-          "https://drawing.wolves.com.tw/api/v1/mollie/account/del-all"
-        );
+        res = await axios.post("/api/v1/mollie/account/del-all");
         if (res.data.state !== 1)
           return swal.fire({
             title: "刪除失敗",
@@ -142,17 +138,14 @@ export default {
 
     const edit = async () => {
       swal.showLoadings();
-      let res = await axios.post(
-        "https://drawing.wolves.com.tw/api/v1/mollie/account/update",
-        {
-          id: form.modal.id,
-          account: form.modal.account,
-          password: form.modal.password,
-          rarity: form.modal.rarity,
-          img: form.modal.img,
-          prizeName: form.modal.prizeName,
-        }
-      );
+      let res = await axios.post("/api/v1/mollie/account/update", {
+        id: form.modal.id,
+        account: form.modal.account,
+        password: form.modal.password,
+        rarity: form.modal.rarity,
+        img: form.modal.img,
+        prizeName: form.modal.prizeName,
+      });
       if (res.data.state !== 1)
         return swal.fire({
           title: "修改失敗",
@@ -187,10 +180,9 @@ export default {
       });
       if (ask.isConfirmed) {
         console.log("確認", temp);
-        let res = await axios.post(
-          "https://drawing.wolves.com.tw/api/v1/mollie/account/del",
-          [{ id: temp.id }]
-        );
+        let res = await axios.post("/api/v1/mollie/account/del", [
+          { id: temp.id },
+        ]);
         if (res.data.state !== 1) return swal.fire({ title: "刪除失敗" });
         await getList();
         swal.fire({ title: "刪除成功" });
