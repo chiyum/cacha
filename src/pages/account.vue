@@ -106,7 +106,6 @@ export default {
     };
 
     const delAll = async () => {
-      swal.showLoadings();
       let res = await swal.fire({
         title: "操作確認",
         text: "確定要清空所有人員資料嗎",
@@ -117,6 +116,7 @@ export default {
         reverseButtons: true,
       });
       if (res.isConfirmed) {
+        swal.showLoadings();
         res = await axios.post("/api/v1/mollie/account/del-all");
         if (res.data.state !== 1)
           return swal.fire({
