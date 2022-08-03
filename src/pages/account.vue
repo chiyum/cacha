@@ -167,7 +167,6 @@ export default {
     };
 
     const del = async (item) => {
-      swal.showLoadings();
       let temp = item;
       let ask = await swal.fire({
         title: "操作確認",
@@ -179,6 +178,7 @@ export default {
         reverseButtons: true,
       });
       if (ask.isConfirmed) {
+        swal.showLoadings();
         console.log("確認", temp);
         let res = await axios.post("/api/v1/mollie/account/del", [
           { id: temp.id },
