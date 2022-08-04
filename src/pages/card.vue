@@ -186,7 +186,7 @@ export default {
       width: 98%;
       height: 98%;
       border-radius: 13px;
-      background: #fff;
+      // background: #fff;
       z-index: 2;
       box-sizing: border-box;
       background-image: url("@/assets/card_front.png");

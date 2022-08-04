@@ -78,6 +78,7 @@ export default {
       if (accountList.data.state !== 1)
         return swal.fire({ title: "列表載入失敗" });
       console.log(res);
+      res.data.result = res.data.result ?? [];
       form.list = res.data.result.map((user) => {
         accountList.data.result.forEach((account) => {
           console.log(user.userId === account?.userId);

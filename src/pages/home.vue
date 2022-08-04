@@ -72,7 +72,7 @@ export default {
       swal.showLoadings();
       let res = await axios.get("/api/v1/mollie/user/list-flag");
       if (res.data.state !== 1) return swal.fire({ title: "列表載入失敗" });
-      list.value = res.data.result;
+      list.value = res.data.result || [];
       console.log(list.value);
       swal.close();
     };
