@@ -3,7 +3,7 @@
     <div class="form">
       <div class="title">受邀書</div>
       <div class="explain">
-        <p>菠菜王賽事即將展開，你想應戰嗎？</p>
+        <p>聖誕生存賽事即將展開，你想應戰嗎？</p>
         <p>留下你的資料吧！</p>
       </div>
       <div class="select">
@@ -115,15 +115,18 @@ export default {
   justify-content: center;
   align-items: center;
   height: 100%;
-  background-image: url("@/assets/home_bg.jpeg");
+  background-image: url("@/assets/home_bg2.jpg");
+  background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
   .form {
+    position: relative;
+    bottom: 0.3rem;
     padding: 0.1rem;
     padding-bottom: 0.2rem;
     width: 70%;
     border-radius: 6px;
-    background-color: rgba($color: #fff, $alpha: 0.5);
+    background-color: rgba($color: #fff, $alpha: 0.9);
     .title,
     .explain {
       text-align: center;
