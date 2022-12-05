@@ -5,29 +5,9 @@
 </template>
 
 <script>
-import { onMounted, inject } from "vue";
+// import { onMounted, inject } from "vue";
 export default {
-  setup() {
-    const swal = inject("$swal");
-    const computeSize = () => {
-      /* 設計尺寸： 750 * 1334 */
-      /* 字體大小隨著螢幕寬度更改 */
-      if (document.body.clientWidth > 750) {
-        swal.fire({
-          title: "溫馨提醒",
-          text: "請使用手機操作",
-          customClass: "swal2-alert",
-        });
-      }
-      document.getElementsByTagName("html")[0].style = `font-size: ${
-        (document.body.clientWidth / 750) * 100
-      }px`;
-    };
-    onMounted(() => {
-      computeSize();
-      window.addEventListener("resize", computeSize);
-    });
-  },
+  setup() {},
 };
 </script>
 

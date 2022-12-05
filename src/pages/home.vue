@@ -25,6 +25,7 @@
 </template>
 <script>
 import { ref, inject, onMounted } from "vue";
+import { onBeforeRouteLeave } from "vue-router";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import axios from "@/axios";
@@ -32,6 +33,20 @@ export default {
   setup() {
     const name = ref("");
     const swal = inject("$swal");
+    const computeSize = () => {
+      /* 設計尺寸： 750 * 1334 */
+      /* 字體大小隨著螢幕寬度更改 */
+      if (document.body.clientWidth > 750) {
+        swal.fire({
+          title: "溫馨提醒",
+          text: "請使用手機操作",
+          customClass: "swal2-alert",
+        });
+      }
+      document.getElementsByTagName("html")[0].style = `font-size: ${
+        (document.body.clientWidth / 750) * 100
+      }px`;
+    };
     const router = useRouter();
     const store = useStore();
     const list = ref([]);
@@ -78,7 +93,14 @@ export default {
     };
     onMounted(() => {
       getList();
+      computeSize();
+      window.addEventListener("resize", computeSize);
     });
+    // 離開頁面前的攔截
+    onBeforeRouteLeave(async () => {
+      window.removeEventListener(computeSize, false);
+    });
+
     return {
       name,
       list,

@@ -132,7 +132,9 @@ export default {
       ]);
       if (res.data.state !== 1) return swal.fire({ title: "修改失敗" });
       await getList();
+      // eslint-disable-next-line require-atomic-updates
       form.isShow = false;
+      // eslint-disable-next-line require-atomic-updates
       form.modal = {
         id: "",
         userName: "",
@@ -159,6 +161,7 @@ export default {
         if (res.data.state !== 1) return swal.fire({ title: "取消失敗" });
         await getList();
         swal.fire({ title: "取消成功" });
+        // eslint-disable-next-line require-atomic-updates
         form.isShow = false;
       }
     };
