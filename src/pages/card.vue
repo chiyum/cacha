@@ -278,12 +278,14 @@ export default {
   }
   @keyframes turn2 {
     0% {
+      visibility: hidden;
       transform: rotateY(0deg);
     }
     // 50% {
     //   // z-index: 2;
     // }
     100% {
+      visibility: visible;
       transform: rotateY(180deg);
       // z-index: 2;
     }
