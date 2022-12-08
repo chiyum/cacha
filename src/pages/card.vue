@@ -19,16 +19,31 @@
 </template>
 <script>
 import card from "@/assets/card_back.png";
-import { reactive, onMounted, computed } from "vue";
+import { reactive, onMounted, computed, inject } from "vue";
 import { useStore } from "vuex";
 
 export default {
   setup() {
     const store = useStore();
+    const swal = inject("$swal");
     const status = reactive({
       isAnimation: false,
       isActive: false,
     });
+    const computeSize = () => {
+      /* 設計尺寸： 750 * 1334 */
+      /* 字體大小隨著螢幕寬度更改 */
+      if (document.body.clientWidth > 750) {
+        swal.fire({
+          title: "溫馨提醒",
+          text: "請使用手機操作",
+          customClass: "swal2-alert",
+        });
+      }
+      document.getElementsByTagName("html")[0].style = `font-size: ${
+        (document.body.clientWidth / 750) * 100
+      }px`;
+    };
     const open = () => {
       status.isActive = true;
     };
@@ -120,6 +135,7 @@ export default {
       position.dom.addEventListener("mousedown", dragStart); //滑鼠事件
       position.dom.addEventListener("touchstart", dragStart); //移動端事件
       setDomSize();
+      computeSize();
     });
     return {
       card,

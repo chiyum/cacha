@@ -25,7 +25,6 @@
 </template>
 <script>
 import { ref, inject, onMounted } from "vue";
-import { onBeforeRouteLeave } from "vue-router";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import axios from "@/axios";
@@ -72,6 +71,22 @@ export default {
               userId: name.value.userId,
               userName: name.value.username,
             });
+            // res = {
+            //   error: null,
+            //   state: 1,
+            //   result: {
+            //     id: "1600692620307283968",
+            //     account: "八方雲",
+            //     password: "八方雲",
+            //     userId: "1600690286671962112",
+            //     username: "Andy",
+            //     rarity: 0,
+            //     img: "img",
+            //     prizeName: "05",
+            //     created_at: "2022-12-08T11:23:54+08:00",
+            //     updated_at: "2022-12-08T12:12:12.229+08:00",
+            //   },
+            // };
             if (res.data.state !== 1)
               return swal.fire({
                 title: `錯誤訊息：${res.data.error[0].message}`,
@@ -97,9 +112,9 @@ export default {
       window.addEventListener("resize", computeSize);
     });
     // 離開頁面前的攔截
-    onBeforeRouteLeave(async () => {
-      window.removeEventListener(computeSize, false);
-    });
+    // onBeforeRouteLeave(async () => {
+    //   window.removeEventListener(computeSize, false);
+    // });
 
     return {
       name,
