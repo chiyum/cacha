@@ -20,7 +20,7 @@
     >
       <div>{{ item?.username }}</div>
       <!-- <div><input type="checkbox" disabled v-model="item.flag" /></div> -->
-      <div>{{ item?.result ? item.result2 + item.result : "無抽卡" }}</div>
+      <div>{{ item?.result ?? "無抽卡" }}</div>
       <div class="edit">
         <span class="svgicon edit" @click="showEditModal(item)"></span
         ><span class="svgicon del" @click="del(item)"></span>

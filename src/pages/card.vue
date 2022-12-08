@@ -211,7 +211,7 @@ export default {
       // backface-visibility: hidden;
       .content {
         color: #e7d4a5;
-        font-size: 2rem;
+        font-size: 0.4rem;
         transform: rotateY(180deg);
       }
     }
